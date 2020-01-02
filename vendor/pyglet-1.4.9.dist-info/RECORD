@@ -1,12 +1,12 @@
-pyglet-1.4.8.dist-info/INSTALLER,sha256=zuuue4knoyJ-UwPPXg8fezS7VCrXJQrAP7zeNuwvFQg,4
-pyglet-1.4.8.dist-info/LICENSE,sha256=pqidmvJj9mJD78g47meKi9b6Na3VzOhg8m4awr47m5s,1545
-pyglet-1.4.8.dist-info/METADATA,sha256=H2AjHbeB-6xn29BZtOUjI6quEaSyVGrwpe2ZBRcCERw,7868
-pyglet-1.4.8.dist-info/NOTICE,sha256=Uqv9R7JdB0-MXg2uvtgp4y3_lZgM6AmBKUE8elQmljU,1022
-pyglet-1.4.8.dist-info/RECORD,,
-pyglet-1.4.8.dist-info/WHEEL,sha256=8zNYZbwQSXoB9IfXOjPfeNwvAsALAjffgk27FqvCWbo,110
-pyglet-1.4.8.dist-info/top_level.txt,sha256=61eFbwB3jWRqmWcMw5zMR4Wf1hIS6eVceAnnn-JngaE,7
-pyglet-1.4.8.dist-info/zip-safe,sha256=AbpHGcgLb-kRsJGnwFEktk7uzpZOCcBY74-YBdrKVGs,1
-pyglet/__init__.py,sha256=7dXVsI-ArCKul-AthKmlcBiH0HEbvg0oaig2JStnOGc,13940
+pyglet-1.4.9.dist-info/INSTALLER,sha256=zuuue4knoyJ-UwPPXg8fezS7VCrXJQrAP7zeNuwvFQg,4
+pyglet-1.4.9.dist-info/LICENSE,sha256=pqidmvJj9mJD78g47meKi9b6Na3VzOhg8m4awr47m5s,1545
+pyglet-1.4.9.dist-info/METADATA,sha256=sgOh3Ekr7Koe9O_YjPg2QDb40RWVB5Sv7gvfnSkDYgc,7868
+pyglet-1.4.9.dist-info/NOTICE,sha256=Uqv9R7JdB0-MXg2uvtgp4y3_lZgM6AmBKUE8elQmljU,1022
+pyglet-1.4.9.dist-info/RECORD,,
+pyglet-1.4.9.dist-info/WHEEL,sha256=8zNYZbwQSXoB9IfXOjPfeNwvAsALAjffgk27FqvCWbo,110
+pyglet-1.4.9.dist-info/top_level.txt,sha256=61eFbwB3jWRqmWcMw5zMR4Wf1hIS6eVceAnnn-JngaE,7
+pyglet-1.4.9.dist-info/zip-safe,sha256=AbpHGcgLb-kRsJGnwFEktk7uzpZOCcBY74-YBdrKVGs,1
+pyglet/__init__.py,sha256=5v663VcueT5JSOXEUASuNgh42BJkh74yPDhd6YKtvX4,13940
 pyglet/__pycache__/__init__.cpython-38.pyc,,
 pyglet/__pycache__/clock.cpython-38.pyc,,
 pyglet/__pycache__/com.cpython-38.pyc,,
@@ -94,7 +94,7 @@ pyglet/gl/__pycache__/win32.cpython-38.pyc,,
 pyglet/gl/__pycache__/xlib.cpython-38.pyc,,
 pyglet/gl/agl.py,sha256=g7lViiNznNur5RQoV0VHEmQ-oFWzM1pLFXM6Bf8-Z2w,28537
 pyglet/gl/base.py,sha256=wsQv3hbRhOI702VE8EScWJwypU3DuGES4eQEqpdgkAU,14992
-pyglet/gl/cocoa.py,sha256=BDjy9CvZnJFI_fk1W4lzX3oOCyuaEQfI6YHeWoS06xM,12488
+pyglet/gl/cocoa.py,sha256=6VWSi5HPysOIJ_dgcPTjRoHGCMk4spFHYLDPjZ7CiQg,12453
 pyglet/gl/gl.py,sha256=DSjobKTKVHgzZXZD0rstl4TOPpvM0dq1SNgNo-_XXZ8,131237
 pyglet/gl/gl_info.py,sha256=MhIVBRNinh5ESJaWunsPpnEm_mBHH45SIGpuaQHh8_4,7430
 pyglet/gl/glext_arb.py,sha256=-NCRbjQEFicuFeZmlMVlgnsruX32yepCd-_yanUpT1I,948339
@@ -115,7 +115,7 @@ pyglet/gl/wgl_info.py,sha256=krEX5vYPG9K506GrhhNDyTmz7EHlI3rYYLHLwOjvQbQ,2860
 pyglet/gl/wglext_arb.py,sha256=8hgH-tbSJ74v-_gWLrQZYNaEETVmM7hHV-JwUZ1s5z8,72174
 pyglet/gl/wglext_nv.py,sha256=xE4ds--yg4CsZwOGgrLuoHLd8VOe5TueSKzb7fhpXjY,71806
 pyglet/gl/win32.py,sha256=mPYz_T9xOYKeSyTmfm5H-8wzwDhEaJcxYs7oFhk0uss,11584
-pyglet/gl/xlib.py,sha256=zotbDV2NAjqdFiKNsVgqqd9YtKllfNWLac7W8EqCUHo,15263
+pyglet/gl/xlib.py,sha256=wWTFxRIpgxlQwDXIS01pNTCIZEnoVB2dAL2oSI-oHTM,15271
 pyglet/graphics/__init__.py,sha256=ms5qhK6DQZM1pALHNR5w8EfyzfFgS2j3r5cKThy_P7E,26833
 pyglet/graphics/__pycache__/__init__.cpython-38.pyc,,
 pyglet/graphics/__pycache__/allocation.cpython-38.pyc,,
@@ -147,8 +147,8 @@ pyglet/image/codecs/bmp.py,sha256=N1oOq_BDsmUA-n7F86szwan5fBm9kLamfkJ_7_GbuVs,12
 pyglet/image/codecs/dds.py,sha256=NKyHwi5ou6-CWGT48nZM6nI5DBGqAL6Kyh-4tOzfSbw,7872
 pyglet/image/codecs/gdiplus.py,sha256=5ZLtM5X6dezw8Sxw3ayeImCvixoqJlTIaDp0yGeu3zg,12822
 pyglet/image/codecs/gdkpixbuf2.py,sha256=7L1Fy6B-JTqd6ZLUp-G4jea3Ezyc6rgKTK2ZBW2RQ_w,10679
-pyglet/image/codecs/gif.py,sha256=Cuj-YH_UEOG2XzwzCl3ma1xo0XuVu8xm2lqrKCQuJGg,5532
-pyglet/image/codecs/pil.py,sha256=w3i46c-OFJH6pDWFXH7woeHqPi-70B4U6HAtBltKU24,4603
+pyglet/image/codecs/gif.py,sha256=i8uxZlIvAYZotxCzsMnlkFIlTNZfAsCq0LKVIWyf0EM,5512
+pyglet/image/codecs/pil.py,sha256=3WI5UW2Dirm9tnKk4QziedL8FGJOmdHS8Qp56QaUmcE,5851
 pyglet/image/codecs/png.py,sha256=L4AsCJ2-AV4CHLqLNxTV8qfde8qKpzl7cksXGDbD7Sc,3765
 pyglet/image/codecs/quartz.py,sha256=ID9BgviqdR9IoBnH0qnfW2qamKoovb5pPpAaAgatgnA,6440
 pyglet/image/codecs/s3tc.py,sha256=mKz-wxjtM_Z6BMFtPFa-7BQvgbhkFB-3kxis_svwiD8,14246
@@ -164,7 +164,7 @@ pyglet/input/__pycache__/wintab.cpython-38.pyc,,
 pyglet/input/__pycache__/x11_xinput.cpython-38.pyc,,
 pyglet/input/__pycache__/x11_xinput_tablet.cpython-38.pyc,,
 pyglet/input/base.py,sha256=S1I0FcXAIivLCizWbfc42FKubyxDRKgVyfl5VVpRGuE,26328
-pyglet/input/darwin_hid.py,sha256=D6T9wcBObW2lgaDl4PEN9KijT4jkmmbvWAt5qB-hMAE,26365
+pyglet/input/darwin_hid.py,sha256=u-fxwglhaRuWwZIORO9DqjIgs0TWhfqBxh981Buq5PU,26655
 pyglet/input/directinput.py,sha256=NFp3JFJSDv8k6xm5l3vbygAFjC5XXwTvzTqWiB6JrnE,8647
 pyglet/input/evdev.py,sha256=kqthgtoNMBdfWEjIZNuCUN60nwjt7uqB_ehN88_hAGs,11077
 pyglet/input/evdev_constants.py,sha256=IrRjtpWUqA0RfIuQVL-51n_J__Zqkp9ERsg5STY3NWI,11545
@@ -210,7 +210,7 @@ pyglet/libs/x11/cursorfont.py,sha256=a9MHKYNXGs1DQRPRSdv84BzMy1LCb8mZxwMAgjNj138
 pyglet/libs/x11/xf86vmode.py,sha256=V3wzesTFHHizKtxRiL6yPqW59Z5a-OVJjaAAWiNKgSw,15349
 pyglet/libs/x11/xinerama.py,sha256=8mR8e00HpxTqyfZlKrbpD9_qRtk9h96gIkLhF199M_Q,4001
 pyglet/libs/x11/xinput.py,sha256=jJMY-HfmOB7gLUcfwNNnaJXWFv3W6fHkIob6xvaZegM,55564
-pyglet/libs/x11/xlib.py,sha256=aVlFjZyUENPge2GLw0q_AwzxEOyt_YDNk1A6xd4PRoE,184950
+pyglet/libs/x11/xlib.py,sha256=oDhanqEfpB0q_26J11TozAYZ8JeXJKPk-DtIwsgFkVQ,185074
 pyglet/libs/x11/xsync.py,sha256=3jbs-ixrx8STMl_EKxVKRGKIpEX3iw1SJ2gXzYlr3Jo,17060
 pyglet/media/__init__.py,sha256=ZCE6ChvZfcxvUymQZLBxfF2_yLrLQiWWvLlovi2acNE,5787
 pyglet/media/__pycache__/__init__.cpython-38.pyc,,
@@ -227,7 +227,7 @@ pyglet/media/codecs/__pycache__/base.cpython-38.pyc,,
 pyglet/media/codecs/__pycache__/ffmpeg.cpython-38.pyc,,
 pyglet/media/codecs/__pycache__/wave.cpython-38.pyc,,
 pyglet/media/codecs/base.py,sha256=hBb86YpA-b4tHIZQfWGIXM1m3Qyi0Go0XBNvNu7CQUY,20221
-pyglet/media/codecs/ffmpeg.py,sha256=-wthdUHdN28Mj9I9HJcXqRqW4oLfHnCsY33t7TNqg9A,39142
+pyglet/media/codecs/ffmpeg.py,sha256=JjO6dFBk9qD_9obwzklV66tomDB_0nayY4aMU8oTyiI,39124
 pyglet/media/codecs/ffmpeg_lib/__init__.py,sha256=AaT9gHaGy_3rlq6Jmh2dhyNrxgnp1g0GxMBHGcsSPOM,1916
 pyglet/media/codecs/ffmpeg_lib/__pycache__/__init__.cpython-38.pyc,,
 pyglet/media/codecs/ffmpeg_lib/__pycache__/libavcodec.cpython-38.pyc,,
@@ -308,7 +308,7 @@ pyglet/text/formats/attributed.py,sha256=CaimhbZ9GQ2AlJsLtCjLYaNNzIe3LRljdYvqN7M
 pyglet/text/formats/html.py,sha256=ZXDkhr72UK0K82m7K8L_xVwpKqyrqc7Cdo_VL0ZEf-c,13220
 pyglet/text/formats/plaintext.py,sha256=qp5FvMg0W4SEhk40jNzRAinX6uSZXA3E2d3sOzP48Hs,2084
 pyglet/text/formats/structured.py,sha256=20_7tTbqQyb6RYQAOJSmvYY7YR_V-n6SxVgdZ_jyhV4,9056
-pyglet/text/layout.py,sha256=nBWVSXne8YkpkONPiWvaEckU5uroowRsalH5M24j0JM,87086
+pyglet/text/layout.py,sha256=WPi_KJhiGALlF8M8DS4QH5Rc6JHFDInNEOc1fWAQWZ4,87399
 pyglet/text/runlist.py,sha256=zLNUESPKr3dku-9f99Se6FakicB9a1MrqC3VxU_ExVI,14471
 pyglet/window/__init__.py,sha256=hDJUHndkFVmFx9pHxMz09UmHHsZ82kKCRgL6QMj6mKc,66560
 pyglet/window/__pycache__/__init__.cpython-38.pyc,,

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="40" height="17" tilewidth="128" tileheight="128" infinite="0" backgroundcolor="#442045" nextlayerid="11" nextobjectid="1">
+<map version="1.2" tiledversion="1.3.1" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="40" height="17" tilewidth="128" tileheight="128" infinite="0" backgroundcolor="#442045" nextlayerid="11" nextobjectid="1">
  <tileset firstgid="1" name="tileset" tilewidth="128" tileheight="128" tilecount="166" columns="0">
   <grid orientation="orthogonal" width="1" height="1"/>
   <tile id="0">
@@ -548,27 +548,27 @@
  </tileset>
  <layer id="6" name="Platforms" width="40" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFo2AUjILBA1xxsEcBKnAEYh8odiJC/WhYEgcKgLgQiIvwqBkNy8EBvBkQeYBSjA4oNc8XiG1HMUUYAGcUIUM=
+   eAFjYBgFoyEwGgKjITB4QsAVySnIbCThUSYwBByB2AeKnYgIkdGwJCKQgEoKgLgQiIvwKB+osGTE46aBlgK5jd7u8wbaCcsDlNLo4Uepeb5AA21HMUVhAABuqCFG
   </data>
  </layer>
  <layer id="7" name="Coins" width="40" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFo2DoghUD7YBRMGzBaNqiHRgN2+EDRuNyFNAKAAAbowKh
+   eAFjYBgFoyEwdENgxdB1+qjLB3kIjKYt2kXQaNjSLmzpbfJoXNI7xEeOfQAbowKh
   </data>
  </layer>
  <layer id="8" name="Don't Touch" width="40" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFo2AUjIJRMApGwSgYucAUDY+CgQcAVEcA1Q==
+   eAFjYBgFoyEwGgKjITAaAqMhMBoCoyEwckPAFOh1ZDxyQ2Lw+BwAVEcA1Q==
   </data>
  </layer>
  <layer id="9" name="Foreground" width="40" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFo2AUjIJRMApGwSggHqQMsDlJVLJ/FAxeAACGBgEr
+   eAFjYBgFoyEwGgKjITAaAqMhMBoCoyFAfAikEK8Ur0pyzUnCa+qo5HAIAQCGBgEr
   </data>
  </layer>
  <layer id="10" name="Background" width="40" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFo2AUjIJRMApGwSjADfzorG8UjAIAeE8AnQ==
+   eAFjYBgFoyEwGgKjITAaAqMhQP8QYKS/lWTZOOpOBgY/skKOfH1kWjeqbRiFAACCtwCg
   </data>
  </layer>
 </map>

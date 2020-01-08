@@ -25,6 +25,12 @@ PLAYER_MOVEMENT_SPEED = 5
 GRAVITY = 1
 PLAYER_JUMP_SPEED = 20
 
+'''Scrolling Constants'''
+LEFT_MARGIN = 250
+RIGHT_MARGIN = 250
+BOTTOM_MARGIN = 50
+TOP_MARGIN = 100
+
 class BusinessCasual(arcade.Window):
     
     """
@@ -47,6 +53,10 @@ class BusinessCasual(arcade.Window):
 
         '''Physics Engine'''
         self.physics_engine = None
+
+        '''Used to keep track of scrolling'''
+        self.view_bottom = 0
+        self.view_left = 0
 
         arcade.set_background_color(arcade.csscolor.CORNFLOWER_BLUE)
 
@@ -84,9 +94,6 @@ class BusinessCasual(arcade.Window):
         '''Creates Physics Engine'''
         self.physics_engine = arcade.PhysicsEnginePlatformer(self.player_sprite, self.wall_list, GRAVITY)
 
-
-
-
     def on_draw(self):
         
         '''Renders everything'''
@@ -123,6 +130,44 @@ class BusinessCasual(arcade.Window):
 
         '''Updates the physics engine'''
         self.physics_engine.update()
+ 
+    # === Scrolling ===
+
+        changed = False
+
+        '''Scroll Left'''
+        left_boundary = self.view_left + LEFT_MARGIN
+        if self.player_sprite.left < left_boundary:
+            self.view_left -= left_boundary - self.player_sprite.left
+            changed = True
+
+        '''Scroll Right'''
+        right_boundary = self.view_left + SCREEN_WIDTH - RIGHT_MARGIN
+        if self.player_sprite.right > right_boundary:
+            self.view_left += self.player_sprite.right - right_boundary
+            changed = True
+
+        '''Scroll Up'''
+        top_boundary = self.view_bottom + SCREEN_HEIGHT - TOP_MARGIN
+        if self.player_sprite.top > top_boundary:
+            self.view_bottom += self.player_sprite.top - top_boundary
+            changed = True
+
+        '''Scroll Down'''
+        bottom_boundary = self.view_bottom + BOTTOM_MARGIN
+        if self.player_sprite.bottom < bottom_boundary:
+            self.view_bottom -= bottom_boundary - self.player_sprite.bottom
+            changed = True
+
+        if changed:
+
+            #Scrolls using integers
+            self.view_bottom = int(self.view_bottom)
+            self.view_left = int(self.view_left)
+
+            '''Scroll'''
+            arcade.set_viewport(self.view_left, SCREEN_WIDTH + self.view_left, self.view_bottom, SCREEN_HEIGHT + self.view_bottom)
+
 
 def main():
         

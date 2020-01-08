@@ -14,12 +14,17 @@ import arcade
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 650
 SCREEN_TITLE = "Business Casual"
+CURRENT_DIRECTORY = os.getcwd()
 
 '''Sprite Constants'''
 CHARACTER_SCALING = .33
 TILE_SCALING = .5
 ITEM_SCALING = .5
 PLAYER_MOVEMENT_SPEED = 5
+PLAYER_START_X = 64
+PLAYER_START_Y = 128
+SPRITE_PIXEL_SIZE = 128
+GRID_PIXEL_SIZE = (SPRITE_PIXEL_SIZE * TILE_SCALING)
 
 '''Physics Constants'''
 GRAVITY = 1
@@ -46,12 +51,15 @@ class BusinessCasual(arcade.Window):
         '''Item, Character, and Wall lists'''
         self.item_list = None
         self.wall_list = None
+        self.background_list = None
+        self.foreground_list = None
+        self.traps_list = None
         self.player_list = None
 
         '''Player Sprite'''
         self.player_sprite = None
 
-        '''Physics Engine'''
+        '''Physics Engine32'''
         self.physics_engine = None
 
         '''Used to keep track of scrolling'''
@@ -60,39 +68,70 @@ class BusinessCasual(arcade.Window):
 
         arcade.set_background_color(arcade.csscolor.CORNFLOWER_BLUE)
 
-    def setup(self):
+        '''Level'''
+        self.level = 1
+
+
+
+    def setup(self, level):
         
         self.player_list = arcade.SpriteList()
+        self.background_list = arcade.SpriteList()
+        self.foreground_list = arcade.SpriteList()
         self.item_list = arcade.SpriteList()
+        self.traps_list = arcade.SpriteList()
         self.wall_list = arcade.SpriteList()
 
         '''Set up Player Character'''
         image_source = os.path.join(__file__, os.getcwd() + "/Assets/Main Character Frames/000.png")
         self.player_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
-        self.player_sprite.center_x = 64
-        self.player_sprite.center_y = 128
+        self.player_sprite.center_x = PLAYER_START_X
+        self.player_sprite.center_y = PLAYER_START_Y
         self.player_list.append(self.player_sprite)
 
-        '''Create Ground'''
-        for x in range(0, 1250, 64):
-            wall = arcade.Sprite(":resources:images/tiles/grassMid.png", TILE_SCALING)
-            wall.center_x = x
-            wall.center_y = 32
-            self.wall_list.append(wall)
 
-        '''Put Some Crates on the ground'''
-        #   Coordinates for crates
-        coordinate_list = [[512, 96],
-                           [256, 96],
-                           [768, 96]]
+        # === Load the Map ===
+        
+        '''Gets the map for the level'''
+        map_name = f"{CURRENT_DIRECTORY}/levels/level1_map.tmx"
+        
+        '''Map Layer Names'''
+        platforms_layer_name = "platforms"
 
-        for coordinate in coordinate_list:
-            wall = arcade.Sprite(":resources:images/tiles/boxCrate_double.png", TILE_SCALING)
-            wall.position = coordinate
-            self.wall_list.append(wall)
+        foreground_layer_name = "foreground"
+
+        background_layer_name = "background"
+
+        items_layer_name = "items"
+
+        traps_layer_name = "traps"
+        
+        '''Loads Map'''
+        my_map = arcade.tilemap.read_tmx(map_name)
+
+
+        '''Foreground'''
+        self.foreground_list = arcade.tilemap.process_layer(my_map, foreground_layer_name, TILE_SCALING)
+
+        '''Background'''
+        self.background_list = arcade.tilemap.process_layer(my_map, background_layer_name, TILE_SCALING)
+
+        '''Platforms'''
+        self.wall_list = arcade.tilemap.process_layer(my_map, platforms_layer_name, TILE_SCALING)
+
+        '''Items'''
+        self.item_list = arcade.tilemap.process_layer(my_map, items_layer_name, TILE_SCALING)
+
+        '''Traps'''
+        self.traps_list = arcade.tilemap.process_layer(my_map, traps_layer_name, TILE_SCALING)
+        
+
 
         '''Creates Physics Engine'''
         self.physics_engine = arcade.PhysicsEnginePlatformer(self.player_sprite, self.wall_list, GRAVITY)
+
+
+
 
     def on_draw(self):
         
@@ -100,9 +139,12 @@ class BusinessCasual(arcade.Window):
         
         arcade.start_render()
 
-        self.player_list.draw()
+        self.background_list.draw()
         self.wall_list.draw()
-        self.item_list.draw()
+        self.traps_list.draw()
+        self.items_list.draw()
+        self.player_list.draw()
+        self.foreground_list.draw()
 
     def on_key_press(self, key, modifiers):
         """Used when the user presses down on the key"""
@@ -116,6 +158,8 @@ class BusinessCasual(arcade.Window):
             self.player_sprite.change_x = -PLAYER_MOVEMENT_SPEED
         if key == arcade.key.RIGHT or key == arcade.key.D:
             self.player_sprite.change_x = PLAYER_MOVEMENT_SPEED
+
+
     
     def on_key_release(self, key, modifiers):
         """Used when the user releases the key"""
@@ -125,41 +169,53 @@ class BusinessCasual(arcade.Window):
         if key == arcade.key.RIGHT or key == arcade.key.D:
             self.player_sprite.change_x = 0
 
-    def on_update(self, delta_time):
+
+
+    def update(self, delta_time):
         """Logic and Movement"""
+
+        changed_camera = False
 
         '''Updates the physics engine'''
         self.physics_engine.update()
+
+        '''Player fall off the map?'''
+        if self.player_sprite.center_y < -100:
+            self.player_sprite.center_x = PLAYER_START_X
+            self.player_sprite.center_y = PLAYER_START_Y
+
+            '''Set the camera to the start'''
+            self.view_left = 0
+            self.view_bottom = 0
+            changed_camera = True
  
     # === Scrolling ===
-
-        changed = False
 
         '''Scroll Left'''
         left_boundary = self.view_left + LEFT_MARGIN
         if self.player_sprite.left < left_boundary:
             self.view_left -= left_boundary - self.player_sprite.left
-            changed = True
+            changed_camera = True
 
         '''Scroll Right'''
         right_boundary = self.view_left + SCREEN_WIDTH - RIGHT_MARGIN
         if self.player_sprite.right > right_boundary:
             self.view_left += self.player_sprite.right - right_boundary
-            changed = True
+            changed_camera = True
 
         '''Scroll Up'''
         top_boundary = self.view_bottom + SCREEN_HEIGHT - TOP_MARGIN
         if self.player_sprite.top > top_boundary:
             self.view_bottom += self.player_sprite.top - top_boundary
-            changed = True
+            changed_camera = True
 
         '''Scroll Down'''
         bottom_boundary = self.view_bottom + BOTTOM_MARGIN
         if self.player_sprite.bottom < bottom_boundary:
             self.view_bottom -= bottom_boundary - self.player_sprite.bottom
-            changed = True
+            changed_camera = True
 
-        if changed:
+        if changed_camera:
 
             #Scrolls using integers
             self.view_bottom = int(self.view_bottom)
@@ -169,12 +225,14 @@ class BusinessCasual(arcade.Window):
             arcade.set_viewport(self.view_left, SCREEN_WIDTH + self.view_left, self.view_bottom, SCREEN_HEIGHT + self.view_bottom)
 
 
+
+
 def main():
         
     '''Main Method'''
 
     window = BusinessCasual()
-    window.setup()
+    window.setup(window.level)
     arcade.run()
 
 if __name__ == "__main__":

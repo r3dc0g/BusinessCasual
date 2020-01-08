@@ -10,93 +10,127 @@ sys.path.append(vendor_dir)
 
 import arcade
 
-SCREEN_WIDTH = 640
-SCREEN_HEIGHT = 480
-SPRITE_SCALING = .50
+'''Constants'''
+SCREEN_WIDTH = 1000
+SCREEN_HEIGHT = 650
 SCREEN_TITLE = "Business Casual"
-MOVEMENT_SPEED = 3
-# How many pixels to keep as a minimum margin between the character
-# and the edge of the screen.
-LEFT_VIEWPORT_MARGIN = 200
-RIGHT_VIEWPORT_MARGIN = 200
-BOTTOM_VIEWPORT_MARGIN = 150
-TOP_VIEWPORT_MARGIN = 100
 
+'''Sprite Constants'''
+CHARACTER_SCALING = .33
+TILE_SCALING = .5
+ITEM_SCALING = .5
+PLAYER_MOVEMENT_SPEED = 5
+
+'''Physics Constants'''
+GRAVITY = 1
+PLAYER_JUMP_SPEED = 20
 
 class BusinessCasual(arcade.Window):
+    
+    """
+    Main Application Class
+    """
 
-    def __init__(self, width, height, title):
+    def __init__(self):
 
-        file_path = os.path.dirname(os.path.abspath(__file__))
-        os.chdir(file_path)
+        '''initializes the window'''
+         
+        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
 
-        # Call the parent class's init function
-        super().__init__(width, height, title)
-
-        
-        self.background = None
-        
-
-        # Make the mouse disappear when it is over the window.
-        # So we just see our object, not the pointer.
-        self.set_mouse_visible(True)
-
+        '''Item, Character, and Wall lists'''
+        self.item_list = None
+        self.wall_list = None
         self.player_list = None
 
+        '''Player Sprite'''
         self.player_sprite = None
 
-        arcade.set_background_color(arcade.color.ASH_GREY)
-    
+        '''Physics Engine'''
+        self.physics_engine = None
+
+        arcade.set_background_color(arcade.csscolor.CORNFLOWER_BLUE)
+
     def setup(self):
-        self.background = arcade.load_texture(os.getcwd() + "/Forest Playing Floor/Forest Background.png")
-
-        """ Set up the game here. Call this function to restart the game. """
-        # Create the Sprite lists
+        
         self.player_list = arcade.SpriteList()
+        self.item_list = arcade.SpriteList()
+        self.wall_list = arcade.SpriteList()
 
-        # Set up the player, specifically placing it at these coordinates.
-
+        '''Set up Player Character'''
         image_source = os.path.join(__file__, os.getcwd() + "/Assets/Main Character Frames/000.png")
-        self.player_sprite = arcade.Sprite(image_source, SPRITE_SCALING)
+        self.player_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
         self.player_sprite.center_x = 64
         self.player_sprite.center_y = 128
         self.player_list.append(self.player_sprite)
 
+        '''Create Ground'''
+        for x in range(0, 1250, 64):
+            wall = arcade.Sprite(":resources:images/tiles/grassMid.png", TILE_SCALING)
+            wall.center_x = x
+            wall.center_y = 32
+            self.wall_list.append(wall)
+
+        '''Put Some Crates on the ground'''
+        #   Coordinates for crates
+        coordinate_list = [[512, 96],
+                           [256, 96],
+                           [768, 96]]
+
+        for coordinate in coordinate_list:
+            wall = arcade.Sprite(":resources:images/tiles/boxCrate_double.png", TILE_SCALING)
+            wall.position = coordinate
+            self.wall_list.append(wall)
+
+        '''Creates Physics Engine'''
+        self.physics_engine = arcade.PhysicsEnginePlatformer(self.player_sprite, self.wall_list, GRAVITY)
+
+
+
+
     def on_draw(self):
-        """ Called whenever we need to draw the window. """
+        
+        '''Renders everything'''
+        
         arcade.start_render()
-        arcade.draw_texture_rectangle(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3, SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
+
         self.player_list.draw()
+        self.wall_list.draw()
+        self.item_list.draw()
+
+    def on_key_press(self, key, modifiers):
+        """Used when the user presses down on the key"""
+
+        if key == arcade.key.UP or key == arcade.key.W:
+            if self.physics_engine.can_jump():
+                self.player_sprite.change_y = PLAYER_JUMP_SPEED
+        if key == arcade.key.DOWN or key == arcade.key.S:
+            self.player_sprite.change_y = -PLAYER_MOVEMENT_SPEED
+        if key == arcade.key.LEFT or key == arcade.key.A:
+            self.player_sprite.change_x = -PLAYER_MOVEMENT_SPEED
+        if key == arcade.key.RIGHT or key == arcade.key.D:
+            self.player_sprite.change_x = PLAYER_MOVEMENT_SPEED
+    
+    def on_key_release(self, key, modifiers):
+        """Used when the user releases the key"""
+
+        if key == arcade.key.LEFT or key == arcade.key.A:
+            self.player_sprite.change_x = 0
+        if key == arcade.key.RIGHT or key == arcade.key.D:
+            self.player_sprite.change_x = 0
 
     def on_update(self, delta_time):
-        self.player_list.update()
+        """Logic and Movement"""
 
-        
-    def on_key_press(self, key, modifiers):
-        """ Called whenever the user presses a key. """
-        if key == arcade.key.LEFT:
-            self.player_sprite.change_x = -MOVEMENT_SPEED
-        elif key == arcade.key.RIGHT:
-            self.player_sprite.change_x = MOVEMENT_SPEED
-        elif key == arcade.key.UP:
-            self.player_sprite.change_y = MOVEMENT_SPEED
-        elif key == arcade.key.DOWN:
-            self.player_sprite.change_y = -MOVEMENT_SPEED
-
-    def on_key_release(self, key, modifiers):
-        """ Called whenever a user releases a key. """
-        if key == arcade.key.LEFT or key == arcade.key.RIGHT:
-            self.player_sprite.change_x = 0
-        elif key == arcade.key.UP or key == arcade.key.DOWN:
-            self.player_sprite.change_y = 0
-
+        '''Updates the physics engine'''
+        self.physics_engine.update()
 
 def main():
-    window = BusinessCasual(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+        
+    '''Main Method'''
+
+    window = BusinessCasual()
     window.setup()
     arcade.run()
 
-
 if __name__ == "__main__":
     main()
-

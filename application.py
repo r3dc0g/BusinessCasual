@@ -17,7 +17,7 @@ SCREEN_TITLE = "Business Casual"
 CURRENT_DIRECTORY = os.getcwd()
 
 '''Sprite Constants'''
-CHARACTER_SCALING = 1
+CHARACTER_SCALING = .5
 TILE_SCALING = .5
 ITEM_SCALING = .5
 PLAYER_MOVEMENT_SPEED = 5
@@ -85,7 +85,7 @@ class BusinessCasual(arcade.Window):
         self.wall_list = arcade.SpriteList()
 
         '''Set up Player Character'''
-        image_source = ":resources:images/animated_characters/female_adventurer/femaleAdventurer_idle.png"
+        image_source = f"{CURRENT_DIRECTORY}/Assets/Main Character Frames/000.png" 
         self.player_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
         self.player_sprite.center_x = PLAYER_START_X
         self.player_sprite.center_y = PLAYER_START_Y
@@ -140,13 +140,13 @@ class BusinessCasual(arcade.Window):
         '''Renders everything'''
         
         arcade.start_render()
-
+        
+        self.player_list.draw()
         self.wall_list.draw()
         self.background_list.draw()
         self.wall_list.draw()
         self.items_list.draw()
         self.traps_list.draw()
-        self.player_list.draw()
         self.foreground_list.draw()
 
     def on_key_press(self, key, modifiers):

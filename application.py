@@ -45,7 +45,6 @@ class BusinessCasual(arcade.Window):
     def __init__(self):
 
         '''initializes the window'''
-         
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
 
         '''Item, Character, and Wall lists'''
@@ -86,12 +85,11 @@ class BusinessCasual(arcade.Window):
         self.wall_list = arcade.SpriteList()
 
         '''Set up Player Character'''
-        image_source = f"{CURRENT_DIRECTORY}/Assets/Main Character Frames/000.png"
+        image_source = ":resources:images/animated_characters/female_adventurer/femaleAdventurer_idle.png"
         self.player_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
         self.player_sprite.center_x = PLAYER_START_X
         self.player_sprite.center_y = PLAYER_START_Y
         self.player_list.append(self.player_sprite)
-
 
         # === Load the Map ===
         
@@ -106,7 +104,7 @@ class BusinessCasual(arcade.Window):
         background_layer_name = "background"
 
         items_layer_name = "items"
-
+        
         traps_layer_name = "traps"
         
         '''Loads Map'''
@@ -176,7 +174,7 @@ class BusinessCasual(arcade.Window):
 
 
 
-    def update(self, delta_time):
+    def on_update(self, delta_time):
         """Logic and Movement"""
 
         changed_camera = False
@@ -190,6 +188,19 @@ class BusinessCasual(arcade.Window):
             self.player_sprite.center_y = PLAYER_START_Y
 
             '''Set the camera to the start'''
+            self.view_left = 0
+            self.view_bottom = 0
+            changed_camera = True
+
+        if self.player_sprite.center_x >= self.end_of_map:
+
+            # Advance to the next level
+            self.level += 1
+
+            # Load the next level
+            self.setup(self.level)
+
+            # Set the camera to the start
             self.view_left = 0
             self.view_bottom = 0
             changed_camera = True

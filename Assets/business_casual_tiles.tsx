@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.2" tiledversion="1.3.1" name="business_casual_tiles" tilewidth="128" tileheight="128" tilecount="26" columns="0">
+<tileset version="1.2" tiledversion="1.3.1" name="business_casual_tiles" tilewidth="128" tileheight="128" tilecount="36" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="0">
   <image width="128" height="128" source="Forest Playing Floor/Grass Slope/Grass Slop Middle Bottom.png"/>
@@ -78,5 +78,35 @@
  </tile>
  <tile id="31">
   <image width="128" height="128" source="Forest Playing Floor/Grass Slope/Grass Slope Bottom Left.png"/>
+ </tile>
+ <tile id="32">
+  <image width="128" height="128" source="Forest Playing Floor/Stone Platform/Stone Bottom Left.png"/>
+ </tile>
+ <tile id="33">
+  <image width="128" height="128" source="Forest Playing Floor/Stone Platform/Stone Bottom Right.png"/>
+ </tile>
+ <tile id="34">
+  <image width="128" height="128" source="Forest Playing Floor/Stone Platform/Stone Extension Bottom Left.png"/>
+ </tile>
+ <tile id="35">
+  <image width="128" height="128" source="Forest Playing Floor/Stone Platform/Stone Extension Bottom Right.png"/>
+ </tile>
+ <tile id="36">
+  <image width="128" height="128" source="Forest Playing Floor/Stone Platform/Stone Extension Middle Bottom.png"/>
+ </tile>
+ <tile id="37">
+  <image width="128" height="128" source="Forest Playing Floor/Stone Platform/Stone Extension Middle Top.png"/>
+ </tile>
+ <tile id="38">
+  <image width="128" height="128" source="Forest Playing Floor/Stone Platform/Stone Middle Bottom.png"/>
+ </tile>
+ <tile id="39">
+  <image width="128" height="128" source="Forest Playing Floor/Stone Platform/Stone Middle Top.png"/>
+ </tile>
+ <tile id="40">
+  <image width="128" height="128" source="Forest Playing Floor/Stone Platform/Stone Top Left.png"/>
+ </tile>
+ <tile id="41">
+  <image width="128" height="128" source="Forest Playing Floor/Stone Platform/Stone Top Right.png"/>
  </tile>
 </tileset>

@@ -9,6 +9,8 @@ sys.path.append(vendor_dir)
 
 
 import arcade
+import pyglet
+pyglet.options['search_local_libs'] = True
 
 '''Constants'''
 SCREEN_WIDTH = 1000
@@ -25,6 +27,8 @@ PLAYER_START_X = 64
 PLAYER_START_Y = 225
 SPRITE_PIXEL_SIZE = 128
 GRID_PIXEL_SIZE = (SPRITE_PIXEL_SIZE * TILE_SCALING)
+RIGHT_FACING = 0
+LEFT_FACING = 1
 
 '''Physics Constants'''
 GRAVITY = 1
@@ -35,6 +39,73 @@ LEFT_MARGIN = 250
 RIGHT_MARGIN = 250
 BOTTOM_MARGIN = 50
 TOP_MARGIN = 100
+
+
+def load_texture_pair(filename):
+    """
+    Loads a texture pair
+    """
+
+    return [
+        arcade.load_texture(filename, scale=CHARACTER_SCALING),
+        arcade.load_texture(filename, scale=CHARACTER_SCALING, mirrored=True)
+    ]
+
+class PlayerCharacter(arcade.Sprite):
+    """
+    Main Character
+    """
+
+    def __init__(self):
+
+        '''Sets up parent class'''
+        super().__init__()
+        
+        '''Set the Character facing right'''
+        self.character_face_direction = RIGHT_FACING
+        
+        '''Used for fliping the texture'''
+        self.cur_texture = 0
+
+        '''State tracking'''
+        self.jumping = False
+
+        '''Hitbox'''
+        self.points = [[-22, -64], [22, -64], [22, 28], [-22, 28]]
+
+        # === Load Textures ===
+
+        main_path = f"{CURRENT_DIRECTORY}/Assets/Main Character Frames"
+        
+        '''Standing no movement'''
+        self.idle_texture_pair = load_texture_pair(f"{main_path}/000.png")
+        
+        '''Loading Walking Animation'''
+        self.walk_textures = []
+        for i in range(6):
+            texture = load_texture_pair(f"{main_path}/00{i}.png")
+            self.walk_textures.append(texture)
+
+
+
+        def update_animation(self, delta_time: float = 1/60):
+            
+            '''Determine is a flip is needed'''
+            if self.change_x < 0 and self.character_face_direction == RIGHT_FACING:
+                self.character_face_direction = LEFT_FACING
+            elif self.change > 0 and self.character_face_direction == LEFT_FACING:
+                self.character_face_direction = RIGHT_FACING
+
+            '''idle Animation'''
+            if self.change_x == 0:
+                self.texture = self.idle_texture_pair[self.character_face_direction]
+                return
+            
+            '''Walking Animation'''
+            self.cur_texture += 1
+            if self.cur_texture > 5:
+                self.cur_texture = 0
+            self.texture = self.walk_textures[self.cur_texture][self.character_face_direction]
 
 class BusinessCasual(arcade.Window):
     
@@ -85,8 +156,7 @@ class BusinessCasual(arcade.Window):
         self.wall_list = arcade.SpriteList()
 
         '''Set up Player Character'''
-        image_source = f"{CURRENT_DIRECTORY}/Assets/Main Character Frames/000.png" 
-        self.player_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
+        self.player_sprite = PlayerCharacter()
         self.player_sprite.center_x = PLAYER_START_X
         self.player_sprite.center_y = PLAYER_START_Y
         self.player_list.append(self.player_sprite)
@@ -181,6 +251,15 @@ class BusinessCasual(arcade.Window):
 
         '''Updates the physics engine'''
         self.physics_engine.update()
+
+        '''Can Jump'''
+        if self.physics_engine.can_jump():
+            self.player_sprite.can_jump = False
+        else:
+            self.player_sprite.can_jump = True
+
+        '''Update Animations'''
+        self.player_list.update_animation(delta_time)
 
         '''Player fall off the map?'''
         if self.player_sprite.center_y < -100:

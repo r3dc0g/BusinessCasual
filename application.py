@@ -122,7 +122,7 @@ class BusinessCasual(arcade.Window):
         self.wall_list = arcade.tilemap.process_layer(my_map, platforms_layer_name, TILE_SCALING)
 
         '''Items'''
-        self.item_list = arcade.tilemap.process_layer(my_map, items_layer_name, TILE_SCALING)
+        self.items_list = arcade.tilemap.process_layer(my_map, items_layer_name, TILE_SCALING)
 
         '''Traps'''
         self.traps_list = arcade.tilemap.process_layer(my_map, traps_layer_name, TILE_SCALING)
@@ -140,14 +140,14 @@ class BusinessCasual(arcade.Window):
         '''Renders everything'''
         
         arcade.start_render()
-        
-        self.player_list.draw()
+
+        self.player_list.draw() 
         self.wall_list.draw()
-        self.background_list.draw()
         self.wall_list.draw()
         self.items_list.draw()
         self.traps_list.draw()
         self.foreground_list.draw()
+        self.background_list.draw()
 
     def on_key_press(self, key, modifiers):
         """Used when the user presses down on the key"""

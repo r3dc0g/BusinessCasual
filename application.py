@@ -17,12 +17,12 @@ SCREEN_TITLE = "Business Casual"
 CURRENT_DIRECTORY = os.getcwd()
 
 '''Sprite Constants'''
-CHARACTER_SCALING = .33
+CHARACTER_SCALING = 1
 TILE_SCALING = .5
 ITEM_SCALING = .5
 PLAYER_MOVEMENT_SPEED = 5
 PLAYER_START_X = 64
-PLAYER_START_Y = 128
+PLAYER_START_Y = 225
 SPRITE_PIXEL_SIZE = 128
 GRID_PIXEL_SIZE = (SPRITE_PIXEL_SIZE * TILE_SCALING)
 
@@ -70,6 +70,9 @@ class BusinessCasual(arcade.Window):
 
         '''Level'''
         self.level = 1
+        
+        '''End of the Map'''
+        self.end_of_map = 0
 
 
 
@@ -83,7 +86,7 @@ class BusinessCasual(arcade.Window):
         self.wall_list = arcade.SpriteList()
 
         '''Set up Player Character'''
-        image_source = os.path.join(__file__, os.getcwd() + "/Assets/Main Character Frames/000.png")
+        image_source = f"{CURRENT_DIRECTORY}/Assets/Main Character Frames/000.png"
         self.player_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
         self.player_sprite.center_x = PLAYER_START_X
         self.player_sprite.center_y = PLAYER_START_Y
@@ -93,8 +96,8 @@ class BusinessCasual(arcade.Window):
         # === Load the Map ===
         
         '''Gets the map for the level'''
-        map_name = f"{CURRENT_DIRECTORY}/levels/level1_map.tmx"
-        
+        map_name = f"{CURRENT_DIRECTORY}/Assets/level_1_map.tmx"
+
         '''Map Layer Names'''
         platforms_layer_name = "platforms"
 
@@ -109,7 +112,8 @@ class BusinessCasual(arcade.Window):
         '''Loads Map'''
         my_map = arcade.tilemap.read_tmx(map_name)
 
-
+        self.end_of_map = my_map.map_size.width * GRID_PIXEL_SIZE
+        
         '''Foreground'''
         self.foreground_list = arcade.tilemap.process_layer(my_map, foreground_layer_name, TILE_SCALING)
 
@@ -139,10 +143,11 @@ class BusinessCasual(arcade.Window):
         
         arcade.start_render()
 
+        self.wall_list.draw()
         self.background_list.draw()
         self.wall_list.draw()
-        self.traps_list.draw()
         self.items_list.draw()
+        self.traps_list.draw()
         self.player_list.draw()
         self.foreground_list.draw()
 

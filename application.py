@@ -1,6 +1,7 @@
 import os
 import sys
 import random
+import time
 
 parent_dir = os.path.abspath(os.path.dirname(__file__))
 vendor_dir = os.path.join(parent_dir, 'vendor')
@@ -22,13 +23,13 @@ CURRENT_DIRECTORY = os.getcwd()
 CHARACTER_SCALING = .5
 TILE_SCALING = .5
 ITEM_SCALING = .5
-PLAYER_MOVEMENT_SPEED = 5
+PLAYER_MOVEMENT_SPEED = 10
 PLAYER_START_X = 64
 PLAYER_START_Y = 225
 SPRITE_PIXEL_SIZE = 128
 GRID_PIXEL_SIZE = (SPRITE_PIXEL_SIZE * TILE_SCALING)
-RIGHT_FACING = 0
-LEFT_FACING = 1
+RIGHT_FACING = 1
+LEFT_FACING = 0
 
 '''Physics Constants'''
 GRAVITY = 1
@@ -40,12 +41,10 @@ RIGHT_MARGIN = 250
 BOTTOM_MARGIN = 50
 TOP_MARGIN = 100
 
-
 def load_texture_pair(filename):
     """
-    Loads a texture pair
+    Load a texture pair, with the second being a mirror image.
     """
-
     return [
         arcade.load_texture(filename, scale=CHARACTER_SCALING),
         arcade.load_texture(filename, scale=CHARACTER_SCALING, mirrored=True)
@@ -60,7 +59,7 @@ class PlayerCharacter(arcade.Sprite):
 
         '''Sets up parent class'''
         super().__init__()
-        
+       
         '''Set the Character facing right'''
         self.character_face_direction = RIGHT_FACING
         
@@ -69,43 +68,72 @@ class PlayerCharacter(arcade.Sprite):
 
         '''State tracking'''
         self.jumping = False
-
+        self.climbing = False
+        self.is_on_ladder = False
+    
         '''Hitbox'''
         self.points = [[-22, -64], [22, -64], [22, 28], [-22, 28]]
 
         # === Load Textures ===
 
-        main_path = f"{CURRENT_DIRECTORY}/Assets/Main Character Frames"
+        main_path = f"{CURRENT_DIRECTORY}/Assets/Character Models/Sir Something"
         
         '''Standing no movement'''
-        self.idle_texture_pair = load_texture_pair(f"{main_path}/000.png")
+        self.idle_texture_pair = load_texture_pair(f"{main_path}/Sir Something Model.png")
         
+        '''Jumping'''
+        self.jump_texture_pair = load_texture_pair(f"{main_path}/Main Character Frames/000.png")
+        
+        '''Falling'''
+        self.fall_texture_pair = load_texture_pair(f"{main_path}/Main Character Frames/000.png")
+
         '''Loading Walking Animation'''
         self.walk_textures = []
         for i in range(6):
-            texture = load_texture_pair(f"{main_path}/00{i}.png")
+            texture = load_texture_pair(f"{main_path}/Main Character Frames/00{i}.png")
             self.walk_textures.append(texture)
+        
+    def update_animation(self, delta_time: float = 1):
 
+        '''Figure out if we need to flip face left or right'''
+        if self.change_x < 0 and self.character_face_direction == RIGHT_FACING:
+            self.character_face_direction = LEFT_FACING
+        elif self.change_x > 0 and self.character_face_direction == LEFT_FACING:
+            self.character_face_direction = RIGHT_FACING
 
-
-        def update_animation(self, delta_time: float = 1/60):
-            
-            '''Determine is a flip is needed'''
-            if self.change_x < 0 and self.character_face_direction == RIGHT_FACING:
-                self.character_face_direction = LEFT_FACING
-            elif self.change > 0 and self.character_face_direction == LEFT_FACING:
-                self.character_face_direction = RIGHT_FACING
-
-            '''idle Animation'''
-            if self.change_x == 0:
-                self.texture = self.idle_texture_pair[self.character_face_direction]
-                return
-            
-            '''Walking Animation'''
+        '''Climbing animation'''
+        if self.is_on_ladder:
+            self.climbing = True
+        if not self.is_on_ladder and self.climbing:
+            self.climbing = False
+        if self.climbing and abs(self.change_y) > 1:
             self.cur_texture += 1
-            if self.cur_texture > 5:
+            if self.cur_texture > 7:
                 self.cur_texture = 0
-            self.texture = self.walk_textures[self.cur_texture][self.character_face_direction]
+        if self.climbing:
+            self.texture = self.climbing_textures[self.cur_texture // 4]
+            return
+
+        '''Jumping animation'''
+        if self.jumping and not self.is_on_ladder:
+            if self.change_y >= 0:
+                self.texture = self.jump_texture_pair[self.character_face_direction]
+            else:
+                self.texture = self.fall_texture_pair[self.character_face_direction]
+            return
+
+        '''Idle animation'''
+        if self.change_x == 0:
+            self.texture = self.idle_texture_pair[self.character_face_direction]
+            return
+
+        '''Walking animation'''
+        self.cur_texture += 1
+        if self.cur_texture > 5:
+            self.cur_texture = 0
+        self.texture = self.walk_textures[self.cur_texture][self.character_face_direction]
+
+
 
 class BusinessCasual(arcade.Window):
     
@@ -117,6 +145,17 @@ class BusinessCasual(arcade.Window):
 
         '''initializes the window'''
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+        
+        '''Set the current directory to the program directory'''
+        file_path = os.path.dirname(os.path.abspath(__file__))
+        os.chdir(file_path)
+
+        '''Which key was pressed'''
+        self.up_pressed = False
+        self.down_pressed = False
+        self.left_pressed = False
+        self.right_pressed = False
+        self.jump_needs_reset = False
 
         '''Item, Character, and Wall lists'''
         self.item_list = None
@@ -144,7 +183,8 @@ class BusinessCasual(arcade.Window):
         '''End of the Map'''
         self.end_of_map = 0
 
-
+        '''Score'''
+        self.score = 0
 
     def setup(self, level):
         
@@ -218,31 +258,74 @@ class BusinessCasual(arcade.Window):
         self.traps_list.draw()
         self.foreground_list.draw()
         self.background_list.draw()
+        
+        '''Draws the score'''
+        score_text = f"Score: {self.score}"
+        arcade.draw_text(score_text, 10 + self.view_left, 10 + self.view_bottom,
+                         arcade.csscolor.BLACK, 18)
+
+    def process_keychange(self):
+
+        """
+        Process when a key is changed from left/right or up/down
+        """
+
+        '''Up/Down'''
+        if self.up_pressed and not self.down_pressed:
+            if self.physics_engine.is_on_ladder():
+                self.player_sprite.change_y = PLAYER_MOVEMENT_SPEED
+            elif self.physics_engine.can_jump():
+                self.player_sprite.change_y = PLAYER_JUMP_SPEED
+                self.jump_needs_reset = True
+                self.player_sprite.jumping = True
+        elif self.down_pressed and not self.up_pressed:
+            if self.physics_engine.is_on_ladder():
+                self.player_sprite.change_y = -PLAYER_MOVEMENT_SPEED
+        
+        '''on ladder movement'''
+        if self.physics_engine.is_on_ladder():
+            if not self.up_pressed and not self.down_pressed:
+                self.player_sprite.change_y = 0
+            elif self.up_pressed and self.down_pressed:
+                self.player_sprite.change_y = 0
+        
+        '''Right/Left'''
+        if self.right_pressed and not self.left_pressed:
+            self.player_sprite.change_x = PLAYER_MOVEMENT_SPEED
+        elif self.left_pressed and not self.right_pressed:
+            self.player_sprite.change_x = -PLAYER_MOVEMENT_SPEED
+        else:
+            self.player_sprite.change_x = 0
 
     def on_key_press(self, key, modifiers):
         """Used when the user presses down on the key"""
 
         if key == arcade.key.UP or key == arcade.key.W:
-            if self.physics_engine.can_jump():
-                self.player_sprite.change_y = PLAYER_JUMP_SPEED
-        if key == arcade.key.DOWN or key == arcade.key.S:
-            self.player_sprite.change_y = -PLAYER_MOVEMENT_SPEED
-        if key == arcade.key.LEFT or key == arcade.key.A:
-            self.player_sprite.change_x = -PLAYER_MOVEMENT_SPEED
-        if key == arcade.key.RIGHT or key == arcade.key.D:
-            self.player_sprite.change_x = PLAYER_MOVEMENT_SPEED
+            self.up_pressed = True
+        elif key == arcade.key.DOWN or key == arcade.key.S:
+            self.down_pressed = True
+        elif key == arcade.key.LEFT or key == arcade.key.A:
+            self.left_pressed = True 
+        elif key == arcade.key.RIGHT or key == arcade.key.D:
+            self.right_pressed = True
 
-
+        self.process_keychange()
     
     def on_key_release(self, key, modifiers):
         """Used when the user releases the key"""
+        
+        if key == arcade.key.UP or key == arcade.key.W:
+            self.up_pressed = False
+            self.jump_needs_reset = False
+            self.player_sprite.jumping = False
+        elif key == arcade.key.DOWN or key == arcade.key.S:
+            self.down_pressed = False
+        elif key == arcade.key.LEFT or key == arcade.key.A:
+            self.left_pressed = False
+        elif key == arcade.key.RIGHT or key == arcade.key.D:
+            self.right_pressed = False
 
-        if key == arcade.key.LEFT or key == arcade.key.A:
-            self.player_sprite.change_x = 0
-        if key == arcade.key.RIGHT or key == arcade.key.D:
-            self.player_sprite.change_x = 0
-
-
+        self.process_keychange()
 
     def on_update(self, delta_time):
         """Logic and Movement"""
@@ -252,13 +335,20 @@ class BusinessCasual(arcade.Window):
         '''Updates the physics engine'''
         self.physics_engine.update()
 
-        '''Can Jump'''
+        '''Update Animations'''
+
         if self.physics_engine.can_jump():
             self.player_sprite.can_jump = False
         else:
             self.player_sprite.can_jump = True
 
-        '''Update Animations'''
+        if self.physics_engine.is_on_ladder() and not self.physics_engine.can_jump():
+            self.player_sprite.is_on_ladder = True
+            self.process_keychange()
+        else:
+            self.player_sprite.is_on_ladder = False
+            self.process_keychange()
+
         self.player_list.update_animation(delta_time)
 
         '''Player fall off the map?'''

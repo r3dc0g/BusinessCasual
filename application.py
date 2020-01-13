@@ -65,11 +65,13 @@ class PlayerCharacter(arcade.Sprite):
         
         '''Used for fliping the texture'''
         self.cur_texture = 0
+        self.cur_fight_texture = 0
 
         '''State tracking'''
         self.jumping = False
         self.climbing = False
         self.is_on_ladder = False
+        self.is_fighting = False
     
         '''Hitbox'''
         self.points = [[-22, -64], [22, -64], [22, 28], [-22, 28]]
@@ -82,18 +84,23 @@ class PlayerCharacter(arcade.Sprite):
         self.idle_texture_pair = load_texture_pair(f"{main_path}/Sir Something Model.png")
         
         '''Jumping'''
-        self.jump_texture_pair = load_texture_pair(f"{main_path}/Main Character Frames/000.png")
+        self.jump_texture_pair = load_texture_pair(f"{main_path}/Sir Something Jump Model.png")
         
         '''Falling'''
-        self.fall_texture_pair = load_texture_pair(f"{main_path}/Main Character Frames/000.png")
+        self.fall_texture_pair = load_texture_pair(f"{main_path}/Sir Something Jump Model.png")
 
         '''Loading Walking Animation'''
         self.walk_textures = []
-        for i in range(6):
+        for i in range(12):
             texture = load_texture_pair(f"{main_path}/Main Character Frames/00{i}.png")
             self.walk_textures.append(texture)
         
-    def update_animation(self, delta_time: float = 1):
+        '''Loading attack Animation''' 
+        self.attack_textures = []
+        for i in range(2):
+            texture = load_texture_pair(f"{main_path}/Sir Something Attack {i}.png")
+
+    def update_animation(self, delta_time: float = 1/60):
 
         '''Figure out if we need to flip face left or right'''
         if self.change_x < 0 and self.character_face_direction == RIGHT_FACING:
@@ -129,11 +136,16 @@ class PlayerCharacter(arcade.Sprite):
 
         '''Walking animation'''
         self.cur_texture += 1
-        if self.cur_texture > 5:
+        if self.cur_texture > 11:
             self.cur_texture = 0
         self.texture = self.walk_textures[self.cur_texture][self.character_face_direction]
-
-
+        
+        '''Fighting Texture'''
+        if self.is_fighting:
+            if self.cur_fight_texture > 1:
+                self.cur_fight_texture = 0
+            self.cur_fight_texture += 1
+            self.texture = self.attack_textures[self.cur_fight_texture][self.character_face_direction]
 
 class BusinessCasual(arcade.Window):
     
@@ -158,7 +170,9 @@ class BusinessCasual(arcade.Window):
         self.jump_needs_reset = False
 
         '''Item, Character, and Wall lists'''
-        self.item_list = None
+        self.money_list = None
+        self.potion_list = None
+        self.coffee_list = None
         self.wall_list = None
         self.background_list = None
         self.foreground_list = None
@@ -191,7 +205,9 @@ class BusinessCasual(arcade.Window):
         self.player_list = arcade.SpriteList()
         self.background_list = arcade.SpriteList()
         self.foreground_list = arcade.SpriteList()
-        self.item_list = arcade.SpriteList()
+        self.money_list = arcade.SpriteList()
+        self.coffee_list = arcade.SpriteList()
+        self.potion_list = arcade.SpriteList()
         self.traps_list = arcade.SpriteList()
         self.wall_list = arcade.SpriteList()
 
@@ -213,8 +229,14 @@ class BusinessCasual(arcade.Window):
 
         background_layer_name = "background"
 
-        items_layer_name = "items"
+        money_layer_name = "money"
         
+        potion_layer_name = "potions"
+
+        coffee_layer_name = "coffee"
+
+
+
         traps_layer_name = "traps"
         
         '''Loads Map'''
@@ -231,8 +253,14 @@ class BusinessCasual(arcade.Window):
         '''Platforms'''
         self.wall_list = arcade.tilemap.process_layer(my_map, platforms_layer_name, TILE_SCALING)
 
-        '''Items'''
-        self.items_list = arcade.tilemap.process_layer(my_map, items_layer_name, TILE_SCALING)
+        '''money'''
+        self.money_list = arcade.tilemap.process_layer(my_map, money_layer_name, TILE_SCALING)
+        
+        '''coffee'''
+        self.coffee_list = arcade.tilemap.process_layer(my_map, coffee_layer_name, TILE_SCALING)
+        
+        '''Potions'''
+        self.potion_list = arcade.tilemap.process_layer(my_map, potion_layer_name, TILE_SCALING)
 
         '''Traps'''
         self.traps_list = arcade.tilemap.process_layer(my_map, traps_layer_name, TILE_SCALING)
@@ -254,7 +282,9 @@ class BusinessCasual(arcade.Window):
         self.player_list.draw() 
         self.wall_list.draw()
         self.wall_list.draw()
-        self.items_list.draw()
+        self.money_list.draw()
+        self.coffee_list.draw()
+        self.potion_list.draw()
         self.traps_list.draw()
         self.foreground_list.draw()
         self.background_list.draw()
@@ -308,6 +338,8 @@ class BusinessCasual(arcade.Window):
             self.left_pressed = True 
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.right_pressed = True
+        if key == arcade.key.SPACE:
+            self.player_sprite.is_fighting = True
 
         self.process_keychange()
     
@@ -324,6 +356,8 @@ class BusinessCasual(arcade.Window):
             self.left_pressed = False
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.right_pressed = False
+        if key == arcade.key.SPACE:
+            self.player_sprite.is_fighting = False
 
         self.process_keychange()
 

@@ -32,7 +32,6 @@ CURRENT_DIRECTORY = os.getcwd()
 CHARACTER_SCALING = .5
 TILE_SCALING = .5
 ITEM_SCALING = .5
-PLAYER_MOVEMENT_SPEED = 10
 PLAYER_START_X = 1000
 PLAYER_START_Y = 1500
 SPRITE_PIXEL_SIZE = 128
@@ -50,6 +49,8 @@ RIGHT_MARGIN = 250
 BOTTOM_MARGIN = 50
 TOP_MARGIN = 100
 
+# === Function for loading textures ===
+
 def load_texture_pair(filename):
     """
     Load a texture pair, with the second being a mirror image.
@@ -58,6 +59,8 @@ def load_texture_pair(filename):
         arcade.load_texture(filename, scale=CHARACTER_SCALING),
         arcade.load_texture(filename, scale=CHARACTER_SCALING, mirrored=True)
     ]
+
+# ===== Main Character Sprite Class =====
 
 class PlayerCharacter(arcade.Sprite):
     """
@@ -72,6 +75,8 @@ class PlayerCharacter(arcade.Sprite):
         '''Set the Character facing right'''
         self.character_face_direction = RIGHT_FACING
         
+        self.movement_speed = 10
+
         '''Used for fliping the texture'''
         self.cur_texture = 0
         self.cur_fight_texture = 0
@@ -150,6 +155,8 @@ class PlayerCharacter(arcade.Sprite):
             
         if self.is_fighting:
             self.texture = self.attack_textures[self.cur_fight_texture][self.character_face_direction]
+
+# ===== Game Class =====
 
 class BusinessCasual(arcade.Window):
     
@@ -230,7 +237,7 @@ class BusinessCasual(arcade.Window):
         # === Load the Map ===
         
         '''Gets the map for the level'''
-        map_name = f"{CURRENT_DIRECTORY}/Assets/level_1_map.tmx"
+        map_name = f"{CURRENT_DIRECTORY}/Assets/level_{self.level}_map.tmx"
 
         '''Map Layer Names'''
         platforms_layer_name = "platforms"
@@ -319,14 +326,14 @@ class BusinessCasual(arcade.Window):
         '''Up/Down'''
         if self.up_pressed and not self.down_pressed:
             if self.physics_engine.is_on_ladder():
-                self.player_sprite.change_y = PLAYER_MOVEMENT_SPEED
+                self.player_sprite.change_y = self.player_sprite.movement_speed
             elif self.physics_engine.can_jump():
                 self.player_sprite.change_y = PLAYER_JUMP_SPEED
                 self.jump_needs_reset = True
                 self.player_sprite.jumping = True
         elif self.down_pressed and not self.up_pressed:
             if self.physics_engine.is_on_ladder():
-                self.player_sprite.change_y = -PLAYER_MOVEMENT_SPEED
+                self.player_sprite.change_y = -1 * self.player_sprite.movement_speed
         
         '''on ladder movement'''
         if self.physics_engine.is_on_ladder():
@@ -337,9 +344,9 @@ class BusinessCasual(arcade.Window):
         
         '''Right/Left'''
         if self.right_pressed and not self.left_pressed:
-            self.player_sprite.change_x = PLAYER_MOVEMENT_SPEED
+            self.player_sprite.change_x = self.player_sprite.movement_speed
         elif self.left_pressed and not self.right_pressed:
-            self.player_sprite.change_x = -PLAYER_MOVEMENT_SPEED
+            self.player_sprite.change_x = -1 * self.player_sprite.movement_speed
         else:
             self.player_sprite.change_x = 0
 
@@ -428,8 +435,35 @@ class BusinessCasual(arcade.Window):
             self.view_left = 0
             self.view_bottom = 0
             changed_camera = True
+
+        '''Money Aquiring'''
+        
+        money_hit_list = arcade.check_for_collision_with_list(self.player_sprite,
+                                                             self.money_list)
+
+        '''Loop through each coin we hit (if any) and remove it'''
+        for chaching in money_hit_list:
+
+            # Figure out how many points this coin is worth
+            if 'Points' not in chaching.properties:
+                print("Warning, collected money without a Points property.")
+            else:
+                points = int(chaching.properties['Points'])
+                self.score += points
+
+            '''Remove the money'''
+            chaching.remove_from_sprite_lists()
+
+        '''Getting your cup of joe'''
+
+        coffee_hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.coffee_list)
+
+        '''Loop through each coffee cup and remove it'''
+        for slurp in coffee_hit_list:
+            self.player_sprite.movement_speed += 1
+            slurp.remove_from_sprite_lists()
  
-    # === Scrolling ===
+        # === Scrolling ===
 
         '''Scroll Left'''
         left_boundary = self.view_left + LEFT_MARGIN
@@ -464,8 +498,7 @@ class BusinessCasual(arcade.Window):
             '''Scroll'''
             arcade.set_viewport(self.view_left, SCREEN_WIDTH + self.view_left, self.view_bottom, SCREEN_HEIGHT + self.view_bottom)
 
-
-
+# ===== Main =====
 
 def main():
         

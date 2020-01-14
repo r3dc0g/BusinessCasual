@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.2" tiledversion="1.3.1" name="business_casual_tiles" tilewidth="128" tileheight="128" tilecount="85" columns="0">
+<tileset version="1.2" tiledversion="1.3.1" name="business_casual_tiles" tilewidth="128" tileheight="128" tilecount="87" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="0">
   <image width="128" height="128" source="Forest Playing Floor/Grass Slope/Grass Slop Middle Bottom.png"/>
@@ -74,6 +74,9 @@
   <image width="128" height="128" source="Useable Items/Health Potion Edit.png"/>
  </tile>
  <tile id="30">
+  <properties>
+   <property name="Points" value="500"/>
+  </properties>
   <image width="128" height="128" source="Useable Items/Money Edit.png"/>
  </tile>
  <tile id="31">
@@ -255,5 +258,11 @@
  </tile>
  <tile id="91">
   <image width="128" height="128" source="Tiles/movement_sign_explain.png"/>
+ </tile>
+ <tile id="92">
+  <image width="128" height="128" source="Tiles/money_sign.png"/>
+ </tile>
+ <tile id="93">
+  <image width="128" height="128" source="Tiles/coffee_sign.png"/>
  </tile>
 </tileset>

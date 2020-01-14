@@ -1,17 +1,26 @@
+print("For optimal preformance, run on Linux! :)")
+
+'''imports needed modules for file manipulation and random'''
 import os
 import sys
 import random
-import time
 
+'''Sets up the directory with all the libraries in it for use'''
 parent_dir = os.path.abspath(os.path.dirname(__file__))
 vendor_dir = os.path.join(parent_dir, 'vendor')
 
 sys.path.append(vendor_dir)
 
-
+'''imports the very much needed arcade module'''
 import arcade
+
+'''Makes sure the pyglet library doesn't cause problems getting files'''
 import pyglet
 pyglet.options['search_local_libs'] = True
+
+'''Set the current directory to the program directory'''
+file_path = os.path.dirname(os.path.abspath(__file__))
+os.chdir(file_path)
 
 '''Constants'''
 SCREEN_WIDTH = 1000
@@ -24,8 +33,8 @@ CHARACTER_SCALING = .5
 TILE_SCALING = .5
 ITEM_SCALING = .5
 PLAYER_MOVEMENT_SPEED = 10
-PLAYER_START_X = 64
-PLAYER_START_Y = 225
+PLAYER_START_X = 1000
+PLAYER_START_Y = 1500
 SPRITE_PIXEL_SIZE = 128
 GRID_PIXEL_SIZE = (SPRITE_PIXEL_SIZE * TILE_SCALING)
 RIGHT_FACING = 1
@@ -74,7 +83,7 @@ class PlayerCharacter(arcade.Sprite):
         self.is_fighting = False
     
         '''Hitbox'''
-        self.points = [[-22, -86], [22, -86], [22, 28], [-22, 28]]
+        self.points = [[-22, -86], [22, -86], [22, 86], [-22, 86]]
 
         # === Load Textures ===
 
@@ -114,13 +123,6 @@ class PlayerCharacter(arcade.Sprite):
             self.climbing = True
         if not self.is_on_ladder and self.climbing:
             self.climbing = False
-        if self.climbing and abs(self.change_y) > 1:
-            self.cur_texture += 1
-            if self.cur_texture > 7:
-                self.cur_texture = 0
-        if self.climbing:
-            self.texture = self.climbing_textures[self.cur_texture // 4]
-            return
 
         '''Jumping animation'''
         if self.jumping and not self.is_on_ladder:
@@ -131,7 +133,7 @@ class PlayerCharacter(arcade.Sprite):
             return
 
         '''Idle animation'''
-        if self.change_x == 0:
+        if self.change_x == 0 and not self.is_fighting:
             self.texture = self.idle_texture_pair[self.character_face_direction]
             return
 
@@ -142,10 +144,11 @@ class PlayerCharacter(arcade.Sprite):
         self.texture = self.walk_textures[self.cur_texture][self.character_face_direction]
         
         '''Fighting Texture'''
+        self.cur_fight_texture += 1
+        if self.cur_fight_texture > 1:
+            self.cur_fight_texture = 0
+            
         if self.is_fighting:
-            if self.cur_fight_texture > 1:
-                self.cur_fight_texture = 0
-            self.cur_fight_texture += 1
             self.texture = self.attack_textures[self.cur_fight_texture][self.character_face_direction]
 
 class BusinessCasual(arcade.Window):
@@ -156,11 +159,12 @@ class BusinessCasual(arcade.Window):
 
     def __init__(self):
 
+        # === INITIALIZATION ===
+
         '''initializes the window'''
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
         
-        '''Set the current directory to the program directory'''
-        file_path = os.path.dirname(os.path.abspath(__file__))
+        '''Set the current directory to the program directory again, just to make sure'''
         os.chdir(file_path)
 
         '''Which key was pressed'''
@@ -169,6 +173,7 @@ class BusinessCasual(arcade.Window):
         self.left_pressed = False
         self.right_pressed = False
         self.jump_needs_reset = False
+        self.attack_pressed = False
 
         '''Item, Character, and Wall lists'''
         self.money_list = None
@@ -179,6 +184,7 @@ class BusinessCasual(arcade.Window):
         self.foreground_list = None
         self.traps_list = None
         self.player_list = None
+        self.ladder_list = None
 
         '''Player Sprite'''
         self.player_sprite = None
@@ -202,6 +208,8 @@ class BusinessCasual(arcade.Window):
         self.score = 0
 
     def setup(self, level):
+
+        # === Setup ===
         
         self.player_list = arcade.SpriteList()
         self.background_list = arcade.SpriteList()
@@ -211,6 +219,7 @@ class BusinessCasual(arcade.Window):
         self.potion_list = arcade.SpriteList()
         self.traps_list = arcade.SpriteList()
         self.wall_list = arcade.SpriteList()
+        self.ladder_list = arcade.SpriteList()
 
         '''Set up Player Character'''
         self.player_sprite = PlayerCharacter()
@@ -236,10 +245,14 @@ class BusinessCasual(arcade.Window):
 
         coffee_layer_name = "coffee"
 
-
-
         traps_layer_name = "traps"
+
+        ladder_layer_name = "ladders"
         
+        """
+        LOADING OF LAYERS
+        """
+
         '''Loads Map'''
         my_map = arcade.tilemap.read_tmx(map_name)
 
@@ -266,10 +279,11 @@ class BusinessCasual(arcade.Window):
         '''Traps'''
         self.traps_list = arcade.tilemap.process_layer(my_map, traps_layer_name, TILE_SCALING)
         
-
+        '''Ladders'''
+        self.ladder_list = arcade.tilemap.process_layer(my_map, ladder_layer_name, TILE_SCALING)
 
         '''Creates Physics Engine'''
-        self.physics_engine = arcade.PhysicsEnginePlatformer(self.player_sprite, self.wall_list, GRAVITY)
+        self.physics_engine = arcade.PhysicsEnginePlatformer(self.player_sprite, self.wall_list, gravity_constant=GRAVITY, ladders=self.ladder_list)
 
 
 
@@ -282,13 +296,14 @@ class BusinessCasual(arcade.Window):
 
         self.player_list.draw() 
         self.wall_list.draw()
-        self.wall_list.draw()
+        self.ladder_list.draw()
         self.money_list.draw()
         self.coffee_list.draw()
         self.potion_list.draw()
         self.traps_list.draw()
         self.foreground_list.draw()
         self.background_list.draw()
+        self.player_list.draw()
         
         '''Draws the score'''
         score_text = f"Score: {self.score}"
@@ -328,6 +343,11 @@ class BusinessCasual(arcade.Window):
         else:
             self.player_sprite.change_x = 0
 
+        if self.attack_pressed:
+            self.player_sprite.is_fighting = True
+        else:
+            self.player_sprite.is_fighting = False
+
     def on_key_press(self, key, modifiers):
         """Used when the user presses down on the key"""
 
@@ -339,8 +359,8 @@ class BusinessCasual(arcade.Window):
             self.left_pressed = True 
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.right_pressed = True
-        if key == arcade.key.X:
-            self.player_sprite.is_fighting = True
+        elif key == arcade.key.X:
+            self.attack_pressed = True
 
         self.process_keychange()
     
@@ -357,8 +377,8 @@ class BusinessCasual(arcade.Window):
             self.left_pressed = False
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.right_pressed = False
-        if key == arcade.key.X:
-            self.player_sprite.is_fighting = False
+        elif key == arcade.key.X:
+            self.attack_pressed = False
 
         self.process_keychange()
 

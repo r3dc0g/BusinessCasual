@@ -74,7 +74,7 @@ class PlayerCharacter(arcade.Sprite):
         self.is_fighting = False
     
         '''Hitbox'''
-        self.points = [[-22, -64], [22, -64], [22, 28], [-22, 28]]
+        self.points = [[-22, -86], [22, -86], [22, 28], [-22, 28]]
 
         # === Load Textures ===
 
@@ -91,7 +91,7 @@ class PlayerCharacter(arcade.Sprite):
 
         '''Loading Walking Animation'''
         self.walk_textures = []
-        for i in range(12):
+        for i in range(6):
             texture = load_texture_pair(f"{main_path}/Main Character Frames/00{i}.png")
             self.walk_textures.append(texture)
         
@@ -99,6 +99,7 @@ class PlayerCharacter(arcade.Sprite):
         self.attack_textures = []
         for i in range(2):
             texture = load_texture_pair(f"{main_path}/Sir Something Attack {i}.png")
+            self.attack_textures.append(texture)
 
     def update_animation(self, delta_time: float = 1/60):
 
@@ -136,7 +137,7 @@ class PlayerCharacter(arcade.Sprite):
 
         '''Walking animation'''
         self.cur_texture += 1
-        if self.cur_texture > 11:
+        if self.cur_texture > 5:
             self.cur_texture = 0
         self.texture = self.walk_textures[self.cur_texture][self.character_face_direction]
         
@@ -338,7 +339,7 @@ class BusinessCasual(arcade.Window):
             self.left_pressed = True 
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.right_pressed = True
-        if key == arcade.key.SPACE:
+        if key == arcade.key.X:
             self.player_sprite.is_fighting = True
 
         self.process_keychange()
@@ -356,7 +357,7 @@ class BusinessCasual(arcade.Window):
             self.left_pressed = False
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.right_pressed = False
-        if key == arcade.key.SPACE:
+        if key == arcade.key.X:
             self.player_sprite.is_fighting = False
 
         self.process_keychange()

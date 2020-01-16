@@ -38,6 +38,7 @@ logging.info('Set the working directory to program directory')
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 650
 SCREEN_TITLE = "Business Casual"
+MEMO_TITLE = "Important Memo"
 CURRENT_DIRECTORY = os.getcwd()
 
 '''Sprite Constants'''
@@ -477,17 +478,20 @@ class BusinessCasual(arcade.Window):
         
         '''Test to see if the player reached the end of the map'''
         if self.player_sprite.center_x >= self.end_of_map:
+            if self.level == 3:
+                print("You won!!!")
+                arcade.close_window()
+            else:
+                '''Advance to the next level'''
+                self.level += 1
 
-            '''Advance to the next level'''
-            self.level += 1
+                '''Load the next level'''
+                self.setup(self.level)
 
-            '''Load the next level'''
-            self.setup(self.level)
-
-            '''Set the camera to the start'''
-            self.view_left = 0
-            self.view_bottom = 0
-            changed_camera = True
+                '''Set the camera to the start'''
+                self.view_left = 0
+                self.view_bottom = 0
+                changed_camera = True
 
         '''Money Aquiring'''
         
@@ -560,10 +564,39 @@ class BusinessCasual(arcade.Window):
 
 # ===== Main =====
 
+class Memo(arcade.Window):
+
+    def __init__(self):
+
+        '''Call parent to set up window'''
+        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, MEMO_TITLE)
+        
+        logging.info("==== Initializing Memo Window") 
+
+        '''Initializes a background variable'''
+        self.background = None
+
+    def setup(self):
+        
+        '''Sets background to the memo'''
+        self.background = arcade.load_texture(f"{CURRENT_DIRECTORY}/Assets/Memo Opening Scene.png")
+    
+        logging.info("Set Memo Window Background to The Memo")
+
+    def on_draw(self):
+        
+        '''Starts rendering'''
+        arcade.start_render()
+
+        '''Draws background'''
+        arcade.draw_texture_rectangle(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
+
+
 def main():
         
     '''Main Method'''
-
+    memo = Memo()
+    memo.setup()
     window = BusinessCasual()
     window.setup(window.level)
     arcade.run()

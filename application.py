@@ -1,3 +1,12 @@
+"""
+██████╗ ██╗   ██╗███████╗██╗███╗   ██╗███████╗███████╗███████╗     ██████╗ █████╗ ███████╗██╗   ██╗ █████╗ ██╗     
+██╔══██╗██║   ██║██╔════╝██║████╗  ██║██╔════╝██╔════╝██╔════╝    ██╔════╝██╔══██╗██╔════╝██║   ██║██╔══██╗██║     
+██████╔╝██║   ██║███████╗██║██╔██╗ ██║█████╗  ███████╗███████╗    ██║     ███████║███████╗██║   ██║███████║██║     
+██╔══██╗██║   ██║╚════██║██║██║╚██╗██║██╔══╝  ╚════██║╚════██║    ██║     ██╔══██║╚════██║██║   ██║██╔══██║██║     
+██████╔╝╚██████╔╝███████║██║██║ ╚████║███████╗███████║███████║    ╚██████╗██║  ██║███████║╚██████╔╝██║  ██║███████╗
+╚═════╝  ╚═════╝ ╚══════╝╚═╝╚═╝  ╚═══╝╚══════╝╚══════╝╚══════╝     ╚═════╝╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝
+"""
+
 '''Just some tips for the user'''
 print("For optimal preformance, run on Linux! :)")
 
@@ -38,6 +47,7 @@ logging.info('Set the working directory to program directory')
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 650
 SCREEN_TITLE = "Business Casual"
+MEMO_TITLE = "Important Memo"
 CURRENT_DIRECTORY = os.getcwd()
 
 '''Sprite Constants'''
@@ -350,8 +360,6 @@ class BusinessCasual(arcade.Window):
     def on_draw(self):
         
         '''Renders everything'''
-        
-        logging.info('Drawing...')
 
         arcade.start_render()
         
@@ -477,17 +485,20 @@ class BusinessCasual(arcade.Window):
         
         '''Test to see if the player reached the end of the map'''
         if self.player_sprite.center_x >= self.end_of_map:
+            if self.level == 3:
+                print("You won!!!")
+                arcade.close_window()
+            else:
+                '''Advance to the next level'''
+                self.level += 1
 
-            '''Advance to the next level'''
-            self.level += 1
+                '''Load the next level'''
+                self.setup(self.level)
 
-            '''Load the next level'''
-            self.setup(self.level)
-
-            '''Set the camera to the start'''
-            self.view_left = 0
-            self.view_bottom = 0
-            changed_camera = True
+                '''Set the camera to the start'''
+                self.view_left = 0
+                self.view_bottom = 0
+                changed_camera = True
 
         '''Money Aquiring'''
         
@@ -558,17 +569,26 @@ class BusinessCasual(arcade.Window):
             '''Scroll'''
             arcade.set_viewport(self.view_left, SCREEN_WIDTH + self.view_left, self.view_bottom, SCREEN_HEIGHT + self.view_bottom)
 
+# === Memo ===
+
+''' Opens the memo that explains the objective '''
+
+from PIL import Image
+
+img = Image.open(f"{CURRENT_DIRECTORY}/Assets/Memo Opening Scene.png")
+img.show()
+
 # ===== Main =====
 
 def main():
         
     '''Main Method'''
-
     window = BusinessCasual()
     window.setup(window.level)
-    arcade.run()
 
     logging.info('THE GAME HAS BEGUN')
+
+    arcade.run()
 
 if __name__ == "__main__":
     main()

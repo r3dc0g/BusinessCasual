@@ -1,4 +1,8 @@
 # Business Casual
-A spot to put all the files for the game Business Casual
 
-Please put all your files here!!!
+Business Casual is a Python game made for competition
+at the Business Professionals of America National Leadership
+Conference this May.
+
+Sir Something, the janitor for the Royal Company, must rescue
+Mr. Alchemist after he was abducted by a rival company.

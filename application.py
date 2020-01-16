@@ -1,3 +1,12 @@
+"""
+██████╗ ██╗   ██╗███████╗██╗███╗   ██╗███████╗███████╗███████╗     ██████╗ █████╗ ███████╗██╗   ██╗ █████╗ ██╗     
+██╔══██╗██║   ██║██╔════╝██║████╗  ██║██╔════╝██╔════╝██╔════╝    ██╔════╝██╔══██╗██╔════╝██║   ██║██╔══██╗██║     
+██████╔╝██║   ██║███████╗██║██╔██╗ ██║█████╗  ███████╗███████╗    ██║     ███████║███████╗██║   ██║███████║██║     
+██╔══██╗██║   ██║╚════██║██║██║╚██╗██║██╔══╝  ╚════██║╚════██║    ██║     ██╔══██║╚════██║██║   ██║██╔══██║██║     
+██████╔╝╚██████╔╝███████║██║██║ ╚████║███████╗███████║███████║    ╚██████╗██║  ██║███████║╚██████╔╝██║  ██║███████╗
+╚═════╝  ╚═════╝ ╚══════╝╚═╝╚═╝  ╚═══╝╚══════╝╚══════╝╚══════╝     ╚═════╝╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝
+"""
+
 '''Just some tips for the user'''
 print("For optimal preformance, run on Linux! :)")
 
@@ -351,8 +360,6 @@ class BusinessCasual(arcade.Window):
     def on_draw(self):
         
         '''Renders everything'''
-        
-        logging.info('Drawing...')
 
         arcade.start_render()
         
@@ -562,46 +569,26 @@ class BusinessCasual(arcade.Window):
             '''Scroll'''
             arcade.set_viewport(self.view_left, SCREEN_WIDTH + self.view_left, self.view_bottom, SCREEN_HEIGHT + self.view_bottom)
 
+# === Memo ===
+
+''' Opens the memo that explains the objective '''
+
+from PIL import Image
+
+img = Image.open(f"{CURRENT_DIRECTORY}/Assets/Memo Opening Scene.png")
+img.show()
+
 # ===== Main =====
-
-class Memo(arcade.Window):
-
-    def __init__(self):
-
-        '''Call parent to set up window'''
-        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, MEMO_TITLE)
-        
-        logging.info("==== Initializing Memo Window") 
-
-        '''Initializes a background variable'''
-        self.background = None
-
-    def setup(self):
-        
-        '''Sets background to the memo'''
-        self.background = arcade.load_texture(f"{CURRENT_DIRECTORY}/Assets/Memo Opening Scene.png")
-    
-        logging.info("Set Memo Window Background to The Memo")
-
-    def on_draw(self):
-        
-        '''Starts rendering'''
-        arcade.start_render()
-
-        '''Draws background'''
-        arcade.draw_texture_rectangle(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
-
 
 def main():
         
     '''Main Method'''
-    memo = Memo()
-    memo.setup()
     window = BusinessCasual()
     window.setup(window.level)
-    arcade.run()
 
     logging.info('THE GAME HAS BEGUN')
+
+    arcade.run()
 
 if __name__ == "__main__":
     main()

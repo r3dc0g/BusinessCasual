@@ -355,16 +355,15 @@ class BusinessCasual(arcade.Window):
 
         arcade.start_render()
         
+        self.background_list.draw()
         self.wall_list.draw()
         self.ladder_list.draw()
-        self.money_list.draw()
         self.coffee_list.draw()
+        self.money_list.draw()
         self.potion_list.draw()
-        self.traps_list.draw()
-        self.foreground_list.draw()
-        self.background_list.draw()
         self.player_list.draw()
-        
+        self.foreground_list.draw()
+
         '''Draws the score'''
         score_text = f"Score: {self.score}"
         arcade.draw_text(score_text, 10 + self.view_left, 10 + self.view_bottom,

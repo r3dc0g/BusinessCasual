@@ -1,3 +1,4 @@
+'''Just some tips for the user'''
 print("For optimal preformance, run on Linux! :)")
 
 '''imports needed modules for file manipulation and random'''
@@ -5,11 +6,18 @@ import os
 import sys
 import random
 
+'''Imports the logger'''
+import logging
+
+logging.basicConfig(filename='BusinessCasual.log', filemode='w', level=logging.INFO)
+
 '''Sets up the directory with all the libraries in it for use'''
 parent_dir = os.path.abspath(os.path.dirname(__file__))
 vendor_dir = os.path.join(parent_dir, 'vendor')
 
 sys.path.append(vendor_dir)
+
+logging.info('Set the lib directory to vendor')
 
 '''imports the very much needed arcade module'''
 import arcade
@@ -18,9 +26,13 @@ import arcade
 import pyglet
 pyglet.options['search_local_libs'] = True
 
+logging.info('imported all libraries')
+
 '''Set the current directory to the program directory'''
 file_path = os.path.dirname(os.path.abspath(__file__))
 os.chdir(file_path)
+
+logging.info('Set the working directory to program directory')
 
 '''Constants'''
 SCREEN_WIDTH = 1000
@@ -69,6 +81,8 @@ class PlayerCharacter(arcade.Sprite):
 
     def __init__(self):
 
+        logging.info('==== Initialized Main Character ====')
+
         '''Sets up parent class'''
         super().__init__()
        
@@ -96,24 +110,38 @@ class PlayerCharacter(arcade.Sprite):
         
         '''Standing no movement'''
         self.idle_texture_pair = load_texture_pair(f"{main_path}/Sir Something Model.png")
-        
+    
+        logging.info('Loaded idle textures')
+
         '''Jumping'''
         self.jump_texture_pair = load_texture_pair(f"{main_path}/Sir Something Jump Model.png")
         
+        logging.info('Loaded jumping textures')
+
         '''Falling'''
         self.fall_texture_pair = load_texture_pair(f"{main_path}/Sir Something Jump Model.png")
+        
+        logging.info('loaded falling textures')
 
         '''Loading Walking Animation'''
         self.walk_textures = []
         for i in range(6):
             texture = load_texture_pair(f"{main_path}/Main Character Frames/00{i}.png")
             self.walk_textures.append(texture)
+            logging.info('Loaded walking texture')
         
+
         '''Loading attack Animation''' 
         self.attack_textures = []
         for i in range(2):
             texture = load_texture_pair(f"{main_path}/Sir Something Attack {i}.png")
             self.attack_textures.append(texture)
+            logging.info('loaded attack texture')
+        
+        '''Default Texture'''
+        self.texture = self.idle_texture_pair[self.character_face_direction]
+        logging.info('Loaded Player Default Texture')
+
 
     def update_animation(self, delta_time: float = 1/60):
 
@@ -171,8 +199,12 @@ class BusinessCasual(arcade.Window):
         '''initializes the window'''
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
         
+        logging.info('==== Initialized Game Window ====')
+
+        """
         '''Set the current directory to the program directory again, just to make sure'''
         os.chdir(file_path)
+        """
 
         '''Which key was pressed'''
         self.up_pressed = False
@@ -215,6 +247,8 @@ class BusinessCasual(arcade.Window):
         self.score = 0
 
     def setup(self, level):
+        
+        logging.info('==== Entering Game Window Setup ====')
 
         # === Setup ===
         
@@ -227,18 +261,21 @@ class BusinessCasual(arcade.Window):
         self.traps_list = arcade.SpriteList()
         self.wall_list = arcade.SpriteList()
         self.ladder_list = arcade.SpriteList()
+        
+        logging.info('Setup all sprite lists')
 
         '''Set up Player Character'''
         self.player_sprite = PlayerCharacter()
         self.player_sprite.center_x = PLAYER_START_X
         self.player_sprite.center_y = PLAYER_START_Y
         self.player_list.append(self.player_sprite)
+        
+        logging.info('Loaded Player Character')
+
+        logging.info('==== Starting to load map ===')
 
         # === Load the Map ===
         
-        '''Gets the map for the level'''
-        map_name = f"{CURRENT_DIRECTORY}/Assets/level_{self.level}_map.tmx"
-
         '''Map Layer Names'''
         platforms_layer_name = "platforms"
 
@@ -255,7 +292,14 @@ class BusinessCasual(arcade.Window):
         traps_layer_name = "traps"
 
         ladder_layer_name = "ladders"
+
+        logging.info('All layer names have been set')
+
+        '''Gets the map for the level'''
+        map_name = f"{CURRENT_DIRECTORY}/Assets/level_{level}_map.tmx"
         
+        logging.info(f"Loaded Level {level}")
+
         """
         LOADING OF LAYERS
         """
@@ -263,8 +307,13 @@ class BusinessCasual(arcade.Window):
         '''Loads Map'''
         my_map = arcade.tilemap.read_tmx(map_name)
 
+        logging.info('Read .tmx file')
+        
+        '''Determines the edge of the map'''
         self.end_of_map = my_map.map_size.width * GRID_PIXEL_SIZE
         
+        logging.info('Determined end of map')
+
         '''Foreground'''
         self.foreground_list = arcade.tilemap.process_layer(my_map, foreground_layer_name, TILE_SCALING)
 
@@ -289,9 +338,12 @@ class BusinessCasual(arcade.Window):
         '''Ladders'''
         self.ladder_list = arcade.tilemap.process_layer(my_map, ladder_layer_name, TILE_SCALING)
 
+        logging.info('Created Sprite Lists for each map layer of tiles')
+
         '''Creates Physics Engine'''
         self.physics_engine = arcade.PhysicsEnginePlatformer(self.player_sprite, self.wall_list, gravity_constant=GRAVITY, ladders=self.ladder_list)
-
+        
+        logging.info('Setup physics engine')
 
 
 
@@ -299,9 +351,10 @@ class BusinessCasual(arcade.Window):
         
         '''Renders everything'''
         
-        arcade.start_render()
+        logging.info('Drawing...')
 
-        self.player_list.draw() 
+        arcade.start_render()
+        
         self.wall_list.draw()
         self.ladder_list.draw()
         self.money_list.draw()
@@ -389,7 +442,7 @@ class BusinessCasual(arcade.Window):
 
         self.process_keychange()
 
-    def on_update(self, delta_time):
+    def update(self, delta_time):
         """Logic and Movement"""
 
         changed_camera = False
@@ -422,16 +475,17 @@ class BusinessCasual(arcade.Window):
             self.view_left = 0
             self.view_bottom = 0
             changed_camera = True
-
+        
+        '''Test to see if the player reached the end of the map'''
         if self.player_sprite.center_x >= self.end_of_map:
 
-            # Advance to the next level
+            '''Advance to the next level'''
             self.level += 1
 
-            # Load the next level
+            '''Load the next level'''
             self.setup(self.level)
 
-            # Set the camera to the start
+            '''Set the camera to the start'''
             self.view_left = 0
             self.view_bottom = 0
             changed_camera = True
@@ -444,7 +498,7 @@ class BusinessCasual(arcade.Window):
         '''Loop through each coin we hit (if any) and remove it'''
         for chaching in money_hit_list:
 
-            # Figure out how many points this coin is worth
+            '''Figure out how many points this coin is worth'''
             if 'Points' not in chaching.properties:
                 print("Warning, collected money without a Points property.")
             else:
@@ -454,6 +508,8 @@ class BusinessCasual(arcade.Window):
             '''Remove the money'''
             chaching.remove_from_sprite_lists()
 
+            logging.info('Player picked up money')
+
         '''Getting your cup of joe'''
 
         coffee_hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.coffee_list)
@@ -462,6 +518,7 @@ class BusinessCasual(arcade.Window):
         for slurp in coffee_hit_list:
             self.player_sprite.movement_speed += 1
             slurp.remove_from_sprite_lists()
+            logging.info('Player picked up Coffee')
  
         # === Scrolling ===
 
@@ -470,24 +527,28 @@ class BusinessCasual(arcade.Window):
         if self.player_sprite.left < left_boundary:
             self.view_left -= left_boundary - self.player_sprite.left
             changed_camera = True
+            logging.info('Scrolled Left')
 
         '''Scroll Right'''
         right_boundary = self.view_left + SCREEN_WIDTH - RIGHT_MARGIN
         if self.player_sprite.right > right_boundary:
             self.view_left += self.player_sprite.right - right_boundary
             changed_camera = True
+            logging.info('Scrolled Right')
 
         '''Scroll Up'''
         top_boundary = self.view_bottom + SCREEN_HEIGHT - TOP_MARGIN
         if self.player_sprite.top > top_boundary:
             self.view_bottom += self.player_sprite.top - top_boundary
             changed_camera = True
+            logging.info('Scrolled Up')
 
         '''Scroll Down'''
         bottom_boundary = self.view_bottom + BOTTOM_MARGIN
         if self.player_sprite.bottom < bottom_boundary:
             self.view_bottom -= bottom_boundary - self.player_sprite.bottom
             changed_camera = True
+            logging.info('Scolled Down')
 
         if changed_camera:
 
@@ -507,6 +568,8 @@ def main():
     window = BusinessCasual()
     window.setup(window.level)
     arcade.run()
+
+    logging.info('THE GAME HAS BEGUN')
 
 if __name__ == "__main__":
     main()

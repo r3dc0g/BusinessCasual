@@ -355,6 +355,10 @@ class BusinessCasual(arcade.Window):
         
         logging.info('Setup physics engine')
 
+        '''Get map background color'''
+        if my_map.background_color:
+            arcade.set_background_color(my_map.background_color)
+
 
 
     def on_draw(self):
@@ -583,6 +587,7 @@ img.show()
 def main():
         
     '''Main Method'''
+
     window = BusinessCasual()
     window.setup(window.level)
 
